@@ -1,0 +1,33 @@
+version: '3.4'
+
+networks:
+  acmecustomernetwork:
+
+services:
+ 
+ demoappdb:
+    container_name: acme-db-container
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "pasword@12345#"
+      ACCEPT_EULA: "Y"
+    networks:
+      - acmecustomernetwork
+
+
+ acme.webapi.docker.demo:
+    container_name: acme-webapi-docker-container
+    image: ${DOCKER_REGISTRY-}acmewebapidockerdemo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5050:80"
+    depends_on: 
+      - demoappdb
+    networks:
+      - acmecustomernetwork
+    
+  
